@@ -103,6 +103,12 @@ document.getElementById('stop-btn').addEventListener('click', function ()
 // Retry Button
 document.getElementById('retry-btn').addEventListener('click', function () 
 {
+    if (!gameInProgress) 
+    {
+        alert("There’s no game in progress.");
+        return;
+    }
+
     const userConfirmed = confirm("Are you sure you want to retry? This action will restart the entire game and reset all progress.");
     if (userConfirmed) 
     {
