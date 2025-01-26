@@ -1,7 +1,7 @@
 /*
 AUTHOR:
-    MANDURIAGA, EMMAN T. - Backend
-    HABLA, FREDRICK L. - Frontend
+    MANDURIAGA, EMMAN T. - Backend LOGIC
+    HABLA, FREDRICK L. - Frontend UI
     BAYNA, CLARENCE L. - Documentation
 */
 
@@ -119,8 +119,10 @@ document.getElementById('retry-btn').addEventListener('click', function ()
 // Simulate Rounds
 document.getElementById('simulate-btn').addEventListener('click', function () 
 {
+    // Validation if game is stopped
     if (!gameInProgress || gameStopped) return;
 
+    // LOST all your money
     if (currentBalance <= 0) 
     {
         alert('Game over! You have run out of money.');
@@ -133,6 +135,7 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
     const betGreen = parseInt(document.getElementById('bet-green').value);
     const minutes = parseInt(document.getElementById('minutes-per-round').value);
 
+    // Validation
     if ([betBlack, betGreen, minutes].some(value => value <= 0 || isNaN(value))) 
     {
         alert('Invalid bet or minutes. Please ensure all fields have valid positive values. Sana manalo ka :)');
@@ -141,9 +144,11 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
 
     totalMinutes += minutes;
 
+    // Spin outcomes - whether BOTH WIN, WIN, OR LOSE
     const spinNumber = Math.floor(Math.random() * 30); 
     const outcome = spinOutcomes[spinNumber];
 
+    // LOGIC - BOTH WIN, WIN, OR LOSE
     let amount = 0;
     if (outcome === "WIN") 
     {
@@ -160,6 +165,7 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
 
     currentBalance += amount;
 
+    // TABLE output
     const row = document.createElement('tr');
     row.innerHTML = `
         <td>${round}</td>
