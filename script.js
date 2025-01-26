@@ -1,11 +1,11 @@
 /*
 AUTHOR:
-    MANDURIAGA, EMMAN T.
-    HABLA, FREDRICK L.
-    BAYNA, CLARENCE L.
+    MANDURIAGA, EMMAN T. - Backend
+    HABLA, FREDRICK L. - Frontend
+    BAYNA, CLARENCE L. - Documentation
 */
 
-let currentBalance, round = 1, totalMinutes = 0, gameInProgress = false;
+let currentBalance, round = 1, totalMinutes = 0, gameInProgress = false, gameStopped = false;
 
 // 30 Spins
 const spinOutcomes = [
@@ -44,50 +44,83 @@ const spinOutcomes = [
 // Simulate
 document.getElementById('simulate-btn').addEventListener('click', function () 
 {
-    if (gameInProgress) return;
+    if (gameInProgress || gameStopped) 
+    {
+        if (gameStopped) 
+        {
+            alert("You must retry the game before simulating again. Sana nanalo ka :)");
+        }
+        return;
+    }
 
+    // Get inputs and validate
+    const initialMoneyInput = document.getElementById('initial-money').value.trim();
+    const betBlackInput = document.getElementById('bet-black').value.trim();
+    const betGreenInput = document.getElementById('bet-green').value.trim();
+    const minutesInput = document.getElementById('minutes-per-round').value.trim();
 
-    currentBalance = parseInt(document.getElementById('initial-money').value);
-    const betBlack = parseInt(document.getElementById('bet-black').value);
-    const betGreen = parseInt(document.getElementById('bet-green').value);
-    const minutes = parseInt(document.getElementById('minutes-per-round').value);
+    currentBalance = parseInt(initialMoneyInput);
+    const betBlack = parseInt(betBlackInput);
+    const betGreen = parseInt(betGreenInput);
+    const minutes = parseInt(minutesInput);
 
-    // Validation
-    if ([currentBalance, betBlack, betGreen, minutes].some(isNaN) || currentBalance <= 0 || betBlack <= 0 || betGreen <= 0 || minutes <= 0) 
+    // Validate inputs
+    if (!initialMoneyInput || !betBlackInput || !betGreenInput || !minutesInput || 
+        [currentBalance, betBlack, betGreen, minutes].some(value => isNaN(value) || value <= 0)) 
     {
         alert('Please fill in all fields with valid positive numbers.');
         return;
     }
 
+    // Start the game
     gameInProgress = true;
+    gameStopped = false;
     totalMinutes = 0;
     round = 1;
     document.querySelector('#resultsTable tbody').innerHTML = '';
     document.getElementById('time-info').textContent = '';
 });
 
-// Stop - Yaw q na panalo na me eh
+// Stop Button
 document.getElementById('stop-btn').addEventListener('click', function () 
 {
-    if (!gameInProgress) return;
-    gameInProgress = false;
-    alert(`You stopped the game with a balance of ${currentBalance.toFixed(2)} after ${totalMinutes} minutes.`);
-    document.getElementById('time-info').textContent = `You stopped with a balance of ${currentBalance.toFixed(2)} after ${totalMinutes} minutes.`;
+    if (!gameInProgress) 
+    {
+        alert("There’s no game in progress. How can I stop something that hasn’t even started?");
+        return;
+    }
+
+    const userConfirmed = confirm("Are you sure you want to stop the game and keep your winnings?");
+    if (userConfirmed) 
+    {
+        gameInProgress = false;
+        gameStopped = true;
+        alert(`You stopped the game with a balance of ${currentBalance.toFixed(2)} after ${totalMinutes} minutes.`);
+        document.getElementById('time-info').textContent = `You stopped with a balance of ${currentBalance.toFixed(2)} after ${totalMinutes} minutes.`;
+    }
 });
 
-// Retry button - Ulet
+// Retry Button
 document.getElementById('retry-btn').addEventListener('click', function () 
 {
-    gameInProgress = false;
-    currentBalance = undefined;
-    document.querySelector('input').value = '';
-    document.querySelector('#resultsTable tbody').innerHTML = '';
-    document.getElementById('time-info').textContent = '';
+    const userConfirmed = confirm("Are you sure you want to retry? This action will restart the entire game and reset all progress.");
+    if (userConfirmed) 
+    {
+        alert("Game Reset.");
+        gameInProgress = false;
+        gameStopped = false;
+        currentBalance = undefined;
+        document.querySelectorAll('input').forEach(input => input.value = '');
+        document.querySelector('#resultsTable tbody').innerHTML = '';
+        document.getElementById('time-info').textContent = '';
+    }
 });
 
-// Simulate rounds - Sige Go
+// Simulate Rounds
 document.getElementById('simulate-btn').addEventListener('click', function () 
 {
+    if (!gameInProgress || gameStopped) return;
+
     if (currentBalance <= 0) 
     {
         alert('Game over! You have run out of money.');
@@ -96,18 +129,21 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
         return;
     }
 
-    // Bets and minutes
     const betBlack = parseInt(document.getElementById('bet-black').value);
     const betGreen = parseInt(document.getElementById('bet-green').value);
     const minutes = parseInt(document.getElementById('minutes-per-round').value);
 
+    if ([betBlack, betGreen, minutes].some(value => value <= 0 || isNaN(value))) 
+    {
+        alert('Invalid bet or minutes. Please ensure all fields have valid positive values.');
+        return;
+    }
+
     totalMinutes += minutes;
 
-    // Spin Outcome
     const spinNumber = Math.floor(Math.random() * 30); 
     const outcome = spinOutcomes[spinNumber];
 
-    // BOTH WIN, WIN, LOSE
     let amount = 0;
     if (outcome === "WIN") 
     {
@@ -127,7 +163,7 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
     const row = document.createElement('tr');
     row.innerHTML = `
         <td>${round}</td>
-        <td>${spinNumber + 1}</td> <!-- Display spin number as 1-30 -->
+        <td>${spinNumber + 1}</td>
         <td>${betBlack} / ${betGreen}</td>
         <td>${outcome}</td>
         <td>${amount > 0 ? '+' : ''}${amount.toFixed(2)}</td>
@@ -135,7 +171,8 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
     `;
     document.querySelector('#resultsTable tbody').appendChild(row);
 
-    if (currentBalance <= 0) {
+    if (currentBalance <= 0) 
+    {
         alert('Game over! You have run out of money.');
         document.getElementById('time-info').textContent = `You lost all your money after ${totalMinutes} minutes.`;
         gameInProgress = false;
