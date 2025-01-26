@@ -86,11 +86,11 @@ document.getElementById('stop-btn').addEventListener('click', function ()
 {
     if (!gameInProgress) 
     {
-        alert("There’s no game in progress. How can I stop something that hasn’t even started?");
+        alert("There’s no game in progress. How can I stop something that hasn’t even started? Sana manalo ka :)");
         return;
     }
 
-    const userConfirmed = confirm("Are you sure you want to stop the game and keep your winnings?");
+    const userConfirmed = confirm("Are you sure you want to stop the game and keep your winnings? Panalo na u? :)");
     if (userConfirmed) 
     {
         gameInProgress = false;
@@ -103,12 +103,6 @@ document.getElementById('stop-btn').addEventListener('click', function ()
 // Retry Button
 document.getElementById('retry-btn').addEventListener('click', function () 
 {
-    if (!gameInProgress) 
-    {
-        alert("There’s no game in progress.");
-        return;
-    }
-
     const userConfirmed = confirm("Are you sure you want to retry? This action will restart the entire game and reset all progress.");
     if (userConfirmed) 
     {
@@ -141,7 +135,7 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
 
     if ([betBlack, betGreen, minutes].some(value => value <= 0 || isNaN(value))) 
     {
-        alert('Invalid bet or minutes. Please ensure all fields have valid positive values.');
+        alert('Invalid bet or minutes. Please ensure all fields have valid positive values. Sana manalo ka :)');
         return;
     }
 
