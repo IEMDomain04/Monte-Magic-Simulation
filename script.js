@@ -70,6 +70,11 @@ document.getElementById('simulate-btn').addEventListener('click', function ()
     {
         alert('Please fill in all fields with valid positive numbers.');
         return;
+    } 
+    else if (initialMoneyInput < betBlack || initialMoneyInput < betGreen) // Validate initial amount of money
+    {
+        alert('Input a decent amount of initial money to play!');
+        return;
     }
 
     // Start the game
